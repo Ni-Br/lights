@@ -1,4 +1,4 @@
-# Aurora (name pending...)
+# Luminifu
 A functional RGB display manager (server side).
 
 Most of this project has never been tested and has never (yet) driven anything (ie it will probably break!), be careful!
