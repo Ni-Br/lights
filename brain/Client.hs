@@ -10,7 +10,6 @@ import System.IO
 connect :: HostName -> PortNumber -> IO Handle
 connect host port = do
         handle <- connectTo host (PortNumber port)
-        send handle "Hey!"
         return handle
 
 send :: Handle -> String -> IO ()

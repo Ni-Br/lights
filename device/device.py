@@ -1,30 +1,25 @@
 #Example imported from <https://docs.python.org/2/library/socketserver.html>
-import socketserver
+import socket
 import time
 
-class MyTCPHandler(socketserver.StreamRequestHandler):
-    """
-    The RequestHandler class for our server.
+IP = "localhost"
+PORT = 9999
+BUFFER_SIZE = 20
 
-    It is instantiated once per connection to the server, and must
-    override the handle() method to implement communication to the
-    client.
-    """
-    def handle(self):
-        #Frame to be displayed
-        self.data = self.rfile.readline().strip()
-        #toSpi(self.data)
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((IP, PORT))
+s.listen(1)
 
-        #Ask for the current frame
-        self.wfile.write(str(time.time()).encode())
+conn, addr = s.accept()
+sfile = conn.makefile("rwb")
+print("Connection from:", addr)
+while True:
+    data = sfile.readline().strip()
+    if not data:
+        break
 
-if __name__ == "__main__":
-    #TODO configure this to some sane default (read from args?)
-    HOST, PORT = "localhost", 9999
+    print("Received", data)
+    sfile.write((str(time.time()) + "\n").encode())
+    sfile.flush()
 
-    # Create the server, binding to localhost on port 9999
-    server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
-
-    # Activate the server; this will keep running until you
-    # interrupt the program with Ctrl-C
-    server.serve_forever()
+conn.close()

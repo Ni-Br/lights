@@ -3,6 +3,7 @@ import System.Environment
 import Data.Colour
 import Data.Colour.RGBSpace.HSL
 -- import Data.Colour.Names
+import Network
 import Data.Colour.SRGB
 import System.IO
 
@@ -12,11 +13,15 @@ import Client
 main = do
     [host, port] <- getArgs
     handle <- connect host (fromIntegral . read $ port)
-    putStrLn $ "Connected to " ++ host ++ ":" ++ port
+    putStrLn "Connected?"
+    putStrLn "Gonna say hey!"
+    send handle "Hey!"
+    putStrLn "Said Hey"
     loop handle (timify (wrap.shift 0.3)) (timify std_rainbow) strip
 
+
 -- Main loop
-loop :: (Show a, Read t) => Handle -> (t -> x -> y) -> (t -> y -> RGB a) -> [x] -> IO c
+loop :: (RealFrac a, Show a, Read t) => Handle -> (t -> x -> y) -> (t -> y -> RGB a) -> [x] -> IO c
 loop handle s f display = do
     t <- nextTime handle
     putStrLn "Got t!"
@@ -25,9 +30,9 @@ loop handle s f display = do
     loop handle s f display
     where rgbs t = concat . map colToStr $ return_array (s t) (f t) display
 
-colToStr :: (Show a) => RGB a -> String
-colToStr rgb = show r ++ show g ++ show b 
-    where (r, g, b) = (channelRed rgb, channelGreen rgb, channelBlue rgb)
+colToStr :: (RealFrac a, Show a) => RGB a -> String
+colToStr rgb = show r ++ "," ++ show g ++ "," ++ show b ++ " "
+    where [r, g, b] = map (round . (*255)) (channelRed rgb : channelGreen rgb : channelBlue rgb :[])
 
 
 -- Distance metric
