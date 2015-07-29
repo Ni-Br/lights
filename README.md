@@ -35,3 +35,11 @@ It is interesting to note that in this protocol, the devices are "servers" and t
 
 This is implemented right above TCP.
 The frames are communicated in hex form, a 3 pixel red to black gradient would be "#ff0000#880000#000000".
+
+For other devices
+-----------------
+
+Currently, the device only knows how to talk to a 49 pixel strip LPD6803s via SPI.
+The brain still needs some work to allow it to send to multiple devices and the client needs to be refactored to allow more devices to be added.
+
+Changing the client should not take much effort, I am less sure about the brain though.
