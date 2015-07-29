@@ -31,11 +31,13 @@ start = 0
 #Start SPI
 spi = spidev.SpiDev()
 spi.open(0,0)
+print("SPI is setup.")
 
 #Start listening
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((IP, PORT))
 s.listen(1)
+print("Network is setup. Listening on", IP+":"+str(PORT))
 
 #Connected!
 conn, addr = s.accept()
