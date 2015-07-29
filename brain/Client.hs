@@ -19,5 +19,5 @@ send handle xs = do
 
 nextTime :: Handle -> IO String
 nextTime handle = do
-        resp <- hGetLine $ handle
+        resp <- hGetLine handle
         return resp

@@ -13,11 +13,9 @@ import Client (connect, send, nextTime)
 
 main = do
     [host, port] <- getArgs
-    threadDelay 1000000
-    --putStrLn "Finished waiting"
     handle <- connect host (fromIntegral . read $ port)
-    --putStrLn "Connected?"
-    send handle "Hey!"
+    putStrLn "Connected"
+    send handle (off strip)
     loop handle (timify (wrap.shift 0.3)) (timify std_rainbow) strip
 
 
@@ -49,6 +47,9 @@ return_array projection f = map (f . projection)
 
 
 -- Functions
+off :: [a] -> String
+off xs = concatMap colToStr (map (\ _ -> black) xs)
+
 -- Rainbow
 rainbow :: Double -> Double -> Colour Double
 rainbow l x = sRGB (channelRed c) (channelGreen c) (channelBlue c)

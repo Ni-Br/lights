@@ -16,7 +16,7 @@ def toDevice(rgbs):
         values.append((((r&0x07)<<5) | g)) 
 
     #Add a single 1 bit for every pixel
-    for i in range(int(len(rgb)/8)+1):
+    for i in range(int(len(rgbs)/8)+1):
         values.append(0xFF)
 
     spi.writebytes(values)
@@ -47,17 +47,20 @@ start = time.time()
 
 try:
     while True:
-        data = sfile.readline().strip()
+        data = str(sfile.readline().strip())
+        data = str(data.strip("'"))
         if not data:
             break
 
-        pixels = data.split("#")
+        pixels = data.split("#")[1:]
         rgbs = [struct.unpack('BBB', bytes.fromhex(p)) for p in pixels]
-        toDevice(rgs)
+        toDevice(rgbs)
         
         conn.sendall((str(time.time()) + "\n").encode())
         count +=1
-except:
+except Exception as e:
+    print("hit exception")
+    print(e)
     conn.close()
 
 end = time.time()
