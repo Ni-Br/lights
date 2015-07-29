@@ -1,5 +1,6 @@
 import Data.Fixed
 import System.Environment
+import Control.Concurrent
 import Data.Colour
 import Data.Colour.RGBSpace.HSL
 -- import Data.Colour.Names
@@ -8,31 +9,30 @@ import Data.Colour.SRGB
 import System.IO
 
 --
-import Client
+import Client (connect, send, nextTime)
 
 main = do
     [host, port] <- getArgs
+    threadDelay 1000000
+    --putStrLn "Finished waiting"
     handle <- connect host (fromIntegral . read $ port)
-    putStrLn "Connected?"
-    putStrLn "Gonna say hey!"
+    --putStrLn "Connected?"
     send handle "Hey!"
-    putStrLn "Said Hey"
     loop handle (timify (wrap.shift 0.3)) (timify std_rainbow) strip
 
 
 -- Main loop
-loop :: (RealFrac a, Show a, Read t) => Handle -> (t -> x -> y) -> (t -> y -> RGB a) -> [x] -> IO c
+loop :: Read t => Handle -> (t -> x -> y) -> (t -> y -> Colour Double) -> [x] -> IO c
 loop handle s f display = do
     t <- nextTime handle
-    putStrLn "Got t!"
     send handle (rgbs (read t))
-    putStrLn "Sent array"
     loop handle s f display
-    where rgbs t = concat . map colToStr $ return_array (s t) (f t) display
+    where rgbs t = concatMap colToStr (return_array (s t) (f t) display)
 
-colToStr :: (RealFrac a, Show a) => RGB a -> String
-colToStr rgb = show r ++ "," ++ show g ++ "," ++ show b ++ " "
-    where [r, g, b] = map (round . (*255)) (channelRed rgb : channelGreen rgb : channelBlue rgb :[])
+-- send handle = putStrLn 
+
+colToStr :: Colour Double -> String
+colToStr rgb = sRGB24show rgb
 
 
 -- Distance metric
@@ -50,16 +50,17 @@ return_array projection f = map (f . projection)
 
 -- Functions
 -- Rainbow
-rainbow :: RealFrac a => a -> a -> RGB a
-rainbow l x = hsl (360.0*x) 1 l
+rainbow :: Double -> Double -> Colour Double
+rainbow l x = sRGB (channelRed c) (channelGreen c) (channelBlue c)
+    where c = hsl (360*x) 1 l
 
-std_rainbow :: Double -> RGB Double
+std_rainbow :: Double -> Colour Double
 std_rainbow = rainbow 0.5
 
 -- Dot
-dot :: (Fractional a, Ord a) => a -> AlphaColour a -> a -> a -> AlphaColour a
+dot :: Double -> Colour Double -> Double -> Double -> AlphaColour Double
 dot size col pos x
-    | d pos x < size = dissolve (1-((d pos x)/size)) col
+    | d pos x < size = dissolve (1-((d pos x)/size)) (opaque col)
     | otherwise = transparent
 
 

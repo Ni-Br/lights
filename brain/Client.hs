@@ -20,5 +20,4 @@ send handle xs = do
 nextTime :: Handle -> IO String
 nextTime handle = do
         resp <- hGetLine $ handle
-        putStrLn $ "The device asked for frame for time: " ++ resp
         return resp
