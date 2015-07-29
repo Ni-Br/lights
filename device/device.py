@@ -25,8 +25,6 @@ while True:
     print("Received", data)
     conn.sendall((str(time.time()) + "\n").encode())
     count +=1
-except:
-    pass
 
 end = time.time()
 print(count, "frames in", end-start, "seconds. FPS of", count/(end-start))
