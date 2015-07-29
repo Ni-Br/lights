@@ -34,7 +34,7 @@ Device side:
 It is interesting to note that in this protocol, the devices are "servers" and the brain is a "centralized client".
 
 This is implemented right above TCP.
-The frames are communicated in hex form, a 3 pixel red to black gradient would be "#FF0000#880000#000000".
+The frames are communicated in hex form, a 3 pixel red to black gradient would be `"#FF0000#880000#000000"`.
 
 For other devices
 -----------------
