@@ -17,18 +17,21 @@ This has multiple advantages: only `s` needs to know the actual details of the d
 `s` can also be changed to create interesting effects: waves, having it wrap around, shifting or scaling...
 Given this freedom, `f` can be almost anything you want it to be!
 
-Real world interface
---------------------
-
-Here is a rough sketch of how the protocol would work (take this as a braindump, not as an implementation promise):
+Network interface
+-----------------
 
 Brain side:
+
 0. Brain tries to connect to device
 0. If successful brain sends all-black frame and waits
 0. Brain waits for device to ask it for the frame at time `t`
 
 Device side:
+
 0. Device waits for frames
 0. After receiving and displaying the frame, requests the frame associated with time `t
 
 It is interesting to note that in this protocol, the devices are "servers" and the brain is a "centralized client".
+
+This is implemented right above TCP.
+The frames are communicated in hex form, a 3 pixel red to black gradient would be "#ff0000#880000#000000".
