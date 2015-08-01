@@ -1,11 +1,8 @@
 import Data.Fixed
-import Data.Time.Clock
 import System.Environment
-import Control.Concurrent
 import Data.Colour
 import Data.Colour.RGBSpace.HSL
 -- import Data.Colour.Names
-import Network
 import Data.Colour.SRGB
 import System.IO
 
@@ -16,9 +13,8 @@ main = do
     [host, port] <- getArgs
     handle <- connect host (fromIntegral . read $ port)
     putStrLn "Connected"
-    loop handle (w) (timify std_rainbow) strip
+    loop handle (sliding_wave 1 7) (\ t x -> std_rainbow . wrap $ shift (0.07*t) x) strip
 
-w t x = x + wave 0.1 (scale 0.2 t)
 
 -- Main loop
 loop :: Read t => Handle -> (t -> x -> y) -> (t -> y -> Colour Double) -> [x] -> IO c
@@ -94,8 +90,11 @@ alt :: Num a => a -> a
 alt x = 1 - abs(1-2*x)
 
 -- Wave
-wave :: (Fractional a, Floating a) => a -> a -> a 
-wave p x = (1/factor) * sin (factor*x)
+sliding_wave :: (Fractional a, Floating a) => a -> a -> a -> a -> a
+sliding_wave wvl per t x = x + bounded_sin wvl (shift (t*wvl/per) x)
+
+bounded_sin :: (Fractional a, Floating a) => a -> a -> a 
+bounded_sin p x = (1/factor) * sin (factor*x)
     where factor = 2*pi/p
 
 -- Affine
