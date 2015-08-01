@@ -70,6 +70,7 @@ try:
                 conn.close()
                 print(e)
                 print(count, "frames in", end-start, "seconds. FPS of", count/(end-start))
+                count = 0
                 break
 except Exception as e:
     print("hit exception")
