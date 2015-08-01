@@ -47,6 +47,7 @@ start = time.time()
 
 #Initial
 conn.sendall((str(time.time()) + "\n").encode())
+conn.sendall((str(time.time()) + "\n").encode())
 try:
     while True:
         data = str(sfile.readline().strip())

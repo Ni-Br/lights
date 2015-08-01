@@ -1,4 +1,5 @@
 import Data.Fixed
+import Data.Time.Clock
 import System.Environment
 import Control.Concurrent
 import Data.Colour
@@ -15,15 +16,24 @@ main = do
     [host, port] <- getArgs
     handle <- connect host (fromIntegral . read $ port)
     putStrLn "Connected"
-    send handle (off strip)
-    loop handle (timify (wrap.shift 0.3)) (timify std_rainbow) strip
+    loop handle (w) (timify std_rainbow) strip
 
+w t x = x + wave 0.1 (scale 0.2 t)
 
 -- Main loop
 loop :: Read t => Handle -> (t -> x -> y) -> (t -> y -> Colour Double) -> [x] -> IO c
 loop handle s f display = do
+    wait <- getCurrentTime
     t <- nextTime handle
+
+    start <- getCurrentTime
     send handle (rgbs (read t))
+    end <- getCurrentTime
+
+    putStrLn "--"
+    print $ diffUTCTime start wait
+    print $ diffUTCTime end start
+
     loop handle s f display
     where rgbs t = concatMap colToStr (return_array (s t) (f t) display)
 
@@ -92,6 +102,9 @@ alt :: Num a => a -> a
 alt x = 1 - abs(1-2*x)
 
 -- Wave
+wave :: (Fractional a, Floating a) => a -> a -> a 
+wave p x = (1/factor) * sin (factor*x)
+    where factor = 2*pi*p
 
 -- Affine
 scale :: Num a => a -> a -> a
