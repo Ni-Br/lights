@@ -23,16 +23,8 @@ w t x = x + wave 0.1 (scale 0.2 t)
 -- Main loop
 loop :: Read t => Handle -> (t -> x -> y) -> (t -> y -> Colour Double) -> [x] -> IO c
 loop handle s f display = do
-    wait <- getCurrentTime
     t <- nextTime handle
-
-    start <- getCurrentTime
     send handle (rgbs (read t))
-    end <- getCurrentTime
-
-    putStrLn "--"
-    print $ diffUTCTime start wait
-    print $ diffUTCTime end start
 
     loop handle s f display
     where rgbs t = concatMap colToStr (return_array (s t) (f t) display)
@@ -104,7 +96,7 @@ alt x = 1 - abs(1-2*x)
 -- Wave
 wave :: (Fractional a, Floating a) => a -> a -> a 
 wave p x = (1/factor) * sin (factor*x)
-    where factor = 2*pi*p
+    where factor = 2*pi/p
 
 -- Affine
 scale :: Num a => a -> a -> a
