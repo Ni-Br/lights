@@ -45,9 +45,15 @@ sfile = conn.makefile("rwb")
 print("Connection from:", addr)
 start = time.time()
 
+#Initial
+conn.sendall((str(time.time()) + "\n").encode())
 try:
     while True:
         data = str(sfile.readline().strip())
+
+        #Should be sent as soon after receiving data
+        conn.sendall((str(time.time()) + "\n").encode())
+
         data = str(data.strip("'"))
         if not data:
             break
@@ -56,7 +62,6 @@ try:
         rgbs = [struct.unpack('BBB', bytes.fromhex(p)) for p in pixels]
         toDevice(rgbs)
         
-        conn.sendall((str(time.time()) + "\n").encode())
         count +=1
 except Exception as e:
     print("hit exception")
