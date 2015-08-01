@@ -66,8 +66,9 @@ try:
             
                 count +=1
             except Exception as e:
-                print(e)
+                end = time.time()
                 conn.close()
+                print(e)
                 print(count, "frames in", end-start, "seconds. FPS of", count/(end-start))
                 break
 except Exception as e:
