@@ -54,21 +54,22 @@ try:
         while True:
             try:
                 data = str(sfile.readline().strip())
+
+                #Should be sent as soon after receiving data
+                conn.sendall((str(time.time()) + "\n").encode())
+
+                data = str(data.strip("'"))
+
+                pixels = data.split("#")[1:]
+                rgbs = [struct.unpack('BBB', bytes.fromhex(p)) for p in pixels]
+                toDevice(rgbs)
+            
+                count +=1
             except Exception as e:
                 print(e)
                 conn.close()
+                print(count, "frames in", end-start, "seconds. FPS of", count/(end-start))
                 break
-
-            #Should be sent as soon after receiving data
-            conn.sendall((str(time.time()) + "\n").encode())
-
-            data = str(data.strip("'"))
-
-            pixels = data.split("#")[1:]
-            rgbs = [struct.unpack('BBB', bytes.fromhex(p)) for p in pixels]
-            toDevice(rgbs)
-            
-            count +=1
 except Exception as e:
     print("hit exception")
     print(e)
