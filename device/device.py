@@ -39,31 +39,36 @@ s.bind((IP, PORT))
 s.listen(1)
 print("Network is setup. Listening on", IP+":"+str(PORT))
 
-#Connected!
-conn, addr = s.accept()
-sfile = conn.makefile("rwb")
-print("Connection from:", addr)
-start = time.time()
 
-#Initial
-conn.sendall((str(time.time()) + "\n").encode())
-conn.sendall((str(time.time()) + "\n").encode())
 try:
     while True:
-        data = str(sfile.readline().strip())
+        #Connected!
+        conn, addr = s.accept()
+        sfile = conn.makefile("rwb")
+        print("Connection from:", addr)
+        start = time.time()
 
-        #Should be sent as soon after receiving data
+        #Initial
         conn.sendall((str(time.time()) + "\n").encode())
+        conn.sendall((str(time.time()) + "\n").encode())
+        while True:
+            try:
+                data = str(sfile.readline().strip())
+            except Exception as e:
+                print(e)
+                conn.close()
+                break
 
-        data = str(data.strip("'"))
-        if not data:
-            break
+            #Should be sent as soon after receiving data
+            conn.sendall((str(time.time()) + "\n").encode())
 
-        pixels = data.split("#")[1:]
-        rgbs = [struct.unpack('BBB', bytes.fromhex(p)) for p in pixels]
-        toDevice(rgbs)
-        
-        count +=1
+            data = str(data.strip("'"))
+
+            pixels = data.split("#")[1:]
+            rgbs = [struct.unpack('BBB', bytes.fromhex(p)) for p in pixels]
+            toDevice(rgbs)
+            
+            count +=1
 except Exception as e:
     print("hit exception")
     print(e)
