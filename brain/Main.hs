@@ -13,7 +13,7 @@ main = do
     [host, port] <- getArgs
     handle <- connect host (fromIntegral . read $ port)
     putStrLn "Connected"
-    loop handle (sliding_wave 1 7) (\ t x -> std_rainbow . wrap $ shift (0.07*t) x) strip
+    loop handle (sliding_wave 1 7) (\ t x -> std_rainbow . wrap $ shift (0.08*t) x) strip
 
 
 -- Main loop
