@@ -23,13 +23,13 @@ Network interface
 Brain side:
 
 0. Brain tries to connect to device
-0. If successful brain sends all-black frame and waits
 0. Brain waits for device to ask it for the frame at time `t`
 
 Device side:
 
+0. Once a connection is received, two `t` are sent. This allows for the brain and the client to always have something to work on.
 0. Device waits for frames
-0. After receiving and displaying the frame, requests the frame associated with time `t
+0. After receiving and displaying the frame, requests the frame associated with time `t`
 
 It is interesting to note that in this protocol, the devices are "servers" and the brain is a "centralized client".
 
