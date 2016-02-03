@@ -30,7 +30,7 @@ loop handle s f display = do
 colToStr :: Colour Double -> String
 colToStr rgb = sRGB24show rgb
 
-strip = map (/49) [0..49]
+strip = map (/(49*2)) [0..98]
 
 return_array :: (a -> b) -> (b -> Colour Double) -> [a] -> [Colour Double]
 return_array proj f = map (f . proj)

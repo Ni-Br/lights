@@ -25,6 +25,8 @@ def toDevice(rgbs):
 IP = sys.argv[1]
 PORT = int(sys.argv[2])
 BUFFER_SIZE = 20
+max_fps = 60
+max_period = 1.0/max_fps
 count = 0
 start = 0
 
@@ -51,12 +53,15 @@ try:
         #Initial
         conn.sendall((str(time.time()) + "\n").encode())
         conn.sendall((str(time.time()) + "\n").encode())
+        t = time.time()
         while True:
             try:
                 data = str(sfile.readline().strip())
 
-                #Should be sent as soon after receiving data
-                conn.sendall((str(time.time()) + "\n").encode())
+                #Should be sent as soon after receiving data, but limiting at ~60fps
+                time.sleep(max(0, max_period-time.time()))
+                t = time.time()
+                conn.sendall((str(t) + "\n").encode())
 
                 data = str(data.strip("'"))
 
