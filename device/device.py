@@ -59,7 +59,7 @@ try:
                 data = str(sfile.readline().strip())
 
                 #Should be sent as soon after receiving data, but limiting at ~60fps
-                time.sleep(max(0, max_period-time.time()))
+                time.sleep(max(0, t+max_period-time.time()))
                 t = time.time()
                 conn.sendall((str(t) + "\n").encode())
 
